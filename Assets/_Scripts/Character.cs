@@ -5,6 +5,8 @@ public class Character : MonoBehaviour
     [SerializeField] private float _explosionForce;
     [SerializeField] private float _explosionRadius;
 
+    [SerializeField] private float _grabRadius;
+
     [SerializeField] private ParticleSystem _explosionParticle;
 
     private InputSystem _input;
@@ -21,7 +23,7 @@ public class Character : MonoBehaviour
 
         _shooter = new ExplosionShooter(_explosionForce, _explosionRadius, _explosionParticle);
 
-        _itemGrabber = new ItemGrabber();
+        _itemGrabber = new ItemGrabber(_grabRadius);
     }
 
     private void Update()
@@ -29,12 +31,22 @@ public class Character : MonoBehaviour
         _currentMousePosition = _input.ReadMousePosition();
 
         if (_input.LeftMouseClick)
-            _itemGrabber.Grab(Camera.main.ScreenToWorldPoint(Input.mousePosition), Camera.main.transform.forward * 100);
-
-        Debug.DrawRay(Camera.main.ScreenToWorldPoint(Input.mousePosition), Camera.main.transform.forward * 100);
+            _itemGrabber.Grab(_input.MousePositionToScreenFrom(_currentMousePosition));
 
         if (_input.RightMouseClick)
             _shooter.Shoot(_input.MousePositionToScreenFrom(_currentMousePosition));
     }
 
+    private void OnDrawGizmos()
+    {
+        if (_input == null)
+            return;
+
+        Physics.Raycast(_input.MousePositionToScreenFrom(_currentMousePosition), out RaycastHit hit);
+
+        Gizmos.DrawSphere(hit.point, _grabRadius);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(hit.point, _explosionRadius);
+    }
 }

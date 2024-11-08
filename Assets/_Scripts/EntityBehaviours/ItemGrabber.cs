@@ -2,17 +2,31 @@ using UnityEngine;
 
 public class ItemGrabber
 {
-    private Transform grabbedObject;
+    private float _grabRadius;
 
-    public void Grab(Vector3 origin, Vector3 direction)
+    private Collider[] _overlapedColliders;
+    public ItemGrabber(float grabRadius)
     {
-        if (Physics.Raycast(origin, direction, out RaycastHit hit))
+        _grabRadius = grabRadius;
+
+        _overlapedColliders = new Collider[32];
+    }
+
+    public void Grab(Ray ray)
+    {
+        if (Physics.Raycast(ray, out RaycastHit hit))
         {
-            if (hit.collider.TryGetComponent(out DefaultBox box))
+            int count = Physics.OverlapSphereNonAlloc(hit.point, _grabRadius, _overlapedColliders);
+
+            for (int i = 0; i < count; i++)
             {
-                direction.y = 0;
-                Debug.Log(direction);
-                box.transform.forward += direction * Time.deltaTime;
+                Collider collider = _overlapedColliders[i];
+
+                if (collider.TryGetComponent(out DefaultBox box))
+                {
+                    hit.point = new Vector3(hit.point.x, box.transform.position.y, hit.point.z);
+                    box.transform.position = hit.point;
+                }
             }
         }
     }

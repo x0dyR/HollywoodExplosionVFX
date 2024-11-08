@@ -11,12 +11,6 @@ public class InputSystem
     public Ray MousePositionToScreenFrom(Vector3 mousePosition)
         => Camera.main.ScreenPointToRay(mousePosition);
 
-    public Vector3 MousePositionToWorldFrom(Vector3 mousePosition)
-    {
-        Vector3 newVector = Camera.main.ScreenToWorldPoint(mousePosition);
-        newVector.y = -newVector.y;
-        return newVector;
-    }
     public bool LeftMouseClick
         => Input.GetMouseButton(LeftMouseButton);
 
