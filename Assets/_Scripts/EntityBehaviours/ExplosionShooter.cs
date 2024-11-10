@@ -9,6 +9,8 @@ public class ExplosionShooter
 
     private Collider[] _overlapedColliders;
 
+    private Vector3 _lastPosition;
+
     public ExplosionShooter(float explosionForce, float explosionRadius, ParticleSystem explosionParticle)
     {
         _explosionForce = explosionForce;
@@ -19,21 +21,23 @@ public class ExplosionShooter
         _overlapedColliders = new Collider[32];
     }
 
-    public void Shoot(Ray ray)
+    public void Shoot(Vector3 direction)
     {
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (direction == _lastPosition)
+            return;
+
+        _lastPosition = direction;
+
+        int count = Physics.OverlapSphereNonAlloc(_lastPosition, _explosionRadius, _overlapedColliders);
+
+        Object.Instantiate(_explosionParticle, _lastPosition, Quaternion.identity, null);
+
+        for (int i = 0; i < count; i++)
         {
-            int count = Physics.OverlapSphereNonAlloc(hit.point, _explosionRadius, _overlapedColliders);
+            Collider collider = _overlapedColliders[i];
 
-            Object.Instantiate(_explosionParticle, hit.point, Quaternion.identity, null);
-
-            for (int i = 0; i < count; i++)
-            {
-                Collider collider = _overlapedColliders[i];
-
-                if (collider.TryGetComponent(out Rigidbody rigidbody))
-                    rigidbody.AddExplosionForce(_explosionForce, hit.point, _explosionRadius);
-            }
+            if (collider.TryGetComponent(out Rigidbody rigidbody))
+                rigidbody.AddExplosionForce(_explosionForce, _lastPosition, _explosionRadius);
         }
     }
 }

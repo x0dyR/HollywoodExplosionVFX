@@ -17,6 +17,9 @@ public class Character : MonoBehaviour
 
     private ItemGrabber _itemGrabber;
 
+    private bool _isGrabbing;
+    private bool _isShooting;
+
     private void Awake()
     {
         _input = new InputSystem();
@@ -30,23 +33,13 @@ public class Character : MonoBehaviour
     {
         _currentMousePosition = _input.ReadMousePosition();
 
-        if (_input.LeftMouseClick)
-            _itemGrabber.Grab(_input.MousePositionToScreenFrom(_currentMousePosition));
+        if (_input.LeftMousePressed())
+            _itemGrabber.Grab(_input.RaycastFrom(_currentMousePosition));
 
-        if (_input.RightMouseClick)
-            _shooter.Shoot(_input.MousePositionToScreenFrom(_currentMousePosition));
-    }
 
-    private void OnDrawGizmos()
-    {
-        if (_input == null)
-            return;
+        if (_input.RightMouseClick())
+            _shooter.Shoot(_input.RaycastFrom(_currentMousePosition));
 
-        Physics.Raycast(_input.MousePositionToScreenFrom(_currentMousePosition), out RaycastHit hit);
-
-        Gizmos.DrawSphere(hit.point, _grabRadius);
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(hit.point, _explosionRadius);
+        Debug.DrawRay(_input.ReadMousePosition(), Camera.main.transform.forward * 100);
     }
 }

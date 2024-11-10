@@ -5,6 +5,9 @@ public class ItemGrabber
     private float _grabRadius;
 
     private Collider[] _overlapedColliders;
+
+    private Vector3 _lastPosition;
+
     public ItemGrabber(float grabRadius)
     {
         _grabRadius = grabRadius;
@@ -12,22 +15,24 @@ public class ItemGrabber
         _overlapedColliders = new Collider[32];
     }
 
-    public void Grab(Ray ray)
+    public void Grab(Vector3 direction)
     {
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (direction == _lastPosition)
+            return;
+
+        _lastPosition = direction;
+
+        int count = Physics.OverlapSphereNonAlloc(_lastPosition, _grabRadius, _overlapedColliders);
+
+        for (int i = 0; i < count; i++)
         {
-            int count = Physics.OverlapSphereNonAlloc(hit.point, _grabRadius, _overlapedColliders);
+            Collider collider = _overlapedColliders[i];
 
-            for (int i = 0; i < count; i++)
-            {
-                Collider collider = _overlapedColliders[i];
+            if (collider.TryGetComponent(out DefaultBox box) == false)
+                return;
 
-                if (collider.TryGetComponent(out DefaultBox box))
-                {
-                    hit.point = new Vector3(hit.point.x, box.transform.position.y, hit.point.z);
-                    box.transform.position = hit.point;
-                }
-            }
+            Vector3 grabbedItemPosition = new Vector3(_lastPosition.x, box.transform.position.y, _lastPosition.z);
+            box.transform.position = grabbedItemPosition;
         }
     }
 }

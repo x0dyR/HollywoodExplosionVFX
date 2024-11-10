@@ -8,12 +8,17 @@ public class InputSystem
     public Vector3 ReadMousePosition()
         => Input.mousePosition;
 
-    public Ray MousePositionToScreenFrom(Vector3 mousePosition)
-        => Camera.main.ScreenPointToRay(mousePosition);
+    public Vector3 RaycastFrom(Vector3 mousePosition)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(mousePosition);
 
-    public bool LeftMouseClick
+        Physics.Raycast(ray, out RaycastHit hitInfo);
+        return hitInfo.point;
+    }
+
+    public bool LeftMousePressed()
         => Input.GetMouseButton(LeftMouseButton);
 
-    public bool RightMouseClick
+    public bool RightMouseClick()
         => Input.GetMouseButtonDown(RightMouseButton);
 }
