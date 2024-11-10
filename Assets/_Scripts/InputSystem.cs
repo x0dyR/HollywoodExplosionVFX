@@ -5,6 +5,8 @@ public class InputSystem
     private const int LeftMouseButton = 0;
     private const int RightMouseButton = 1;
 
+    private Vector3 _lastMousePosition;
+
     public Vector3 ReadMousePosition()
         => Input.mousePosition;
 
@@ -12,8 +14,13 @@ public class InputSystem
     {
         Ray ray = Camera.main.ScreenPointToRay(mousePosition);
 
-        Physics.Raycast(ray, out RaycastHit hitInfo);
-        return hitInfo.point;
+        if (_lastMousePosition != mousePosition)
+        {
+            Physics.Raycast(ray, out RaycastHit hitInfo);
+            _lastMousePosition = hitInfo.point;
+        }
+
+        return _lastMousePosition;
     }
 
     public bool LeftMousePressed()

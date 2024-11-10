@@ -39,7 +39,19 @@ public class Character : MonoBehaviour
 
         if (_input.RightMouseClick())
             _shooter.Shoot(_input.RaycastFrom(_currentMousePosition));
+    }
 
-        Debug.DrawRay(_input.ReadMousePosition(), Camera.main.transform.forward * 100);
+    private void OnDrawGizmos()
+    {
+        if (_input == null)
+            return;
+
+        Ray ray = new Ray(Camera.main.ScreenToWorldPoint(_currentMousePosition), Camera.main.transform.forward);
+
+        Physics.Raycast(ray, out RaycastHit hit);
+
+        Gizmos.DrawSphere(hit.point, _grabRadius);
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(hit.point, _explosionRadius);
     }
 }
