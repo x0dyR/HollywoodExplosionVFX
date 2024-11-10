@@ -6,8 +6,6 @@ public class ItemGrabber
 
     private Collider[] _overlapedColliders;
 
-    private Vector3 _lastPosition;
-
     public ItemGrabber(float grabRadius)
     {
         _grabRadius = grabRadius;
@@ -17,12 +15,7 @@ public class ItemGrabber
 
     public void Grab(Vector3 direction)
     {
-        if (direction == _lastPosition)
-            return;
-
-        _lastPosition = direction;
-
-        int count = Physics.OverlapSphereNonAlloc(_lastPosition, _grabRadius, _overlapedColliders);
+        int count = Physics.OverlapSphereNonAlloc(direction, _grabRadius, _overlapedColliders);
 
         for (int i = 0; i < count; i++)
         {
@@ -31,7 +24,7 @@ public class ItemGrabber
             if (collider.TryGetComponent(out Rigidbody rigidbody) == false)
                 return;
 
-            Vector3 grabbedItemPosition = new Vector3(_lastPosition.x, rigidbody.transform.position.y, _lastPosition.z);
+            Vector3 grabbedItemPosition = new Vector3(direction.x, rigidbody.transform.position.y, direction.z);
             rigidbody.MovePosition(grabbedItemPosition);
         }
     }

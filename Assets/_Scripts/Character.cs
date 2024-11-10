@@ -9,16 +9,13 @@ public class Character : MonoBehaviour
 
     [SerializeField] private ParticleSystem _explosionParticle;
 
-    private InputSystem _input;
-
     [SerializeField] private Vector3 _currentMousePosition;
+
+    private InputSystem _input;
 
     private ExplosionShooter _shooter;
 
     private ItemGrabber _itemGrabber;
-
-    private bool _isGrabbing;
-    private bool _isShooting;
 
     private void Awake()
     {
@@ -50,8 +47,8 @@ public class Character : MonoBehaviour
 
         Physics.Raycast(ray, out RaycastHit hit);
 
-        Gizmos.DrawSphere(hit.point, _grabRadius);
+        Gizmos.DrawSphere(hit.point, _grabRadius); //grab radius gizmo
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(hit.point, _explosionRadius);
+        Gizmos.DrawWireSphere(hit.point, _explosionRadius); //explosion radius gizmo
     }
 }
