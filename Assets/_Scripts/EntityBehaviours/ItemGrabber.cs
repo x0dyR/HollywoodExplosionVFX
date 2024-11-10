@@ -28,11 +28,11 @@ public class ItemGrabber
         {
             Collider collider = _overlapedColliders[i];
 
-            if (collider.TryGetComponent(out DefaultBox box) == false)
+            if (collider.TryGetComponent(out Rigidbody rigidbody) == false)
                 return;
 
-            Vector3 grabbedItemPosition = new Vector3(_lastPosition.x, box.transform.position.y, _lastPosition.z);
-            box.transform.position = grabbedItemPosition;
+            Vector3 grabbedItemPosition = new Vector3(_lastPosition.x, rigidbody.transform.position.y, _lastPosition.z);
+            rigidbody.MovePosition(grabbedItemPosition);
         }
     }
 }
