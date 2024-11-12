@@ -9,9 +9,11 @@ public class Character : MonoBehaviour
 
     [SerializeField] private ParticleSystem _explosionParticle;
 
-    [SerializeField] private Vector3 _currentMousePosition;
+    private Vector3 _currentMousePosition;
 
     private InputSystem _input;
+
+    private Raycaster _raycaster;
 
     private ExplosionShooter _shooter;
 
@@ -20,6 +22,8 @@ public class Character : MonoBehaviour
     private void Awake()
     {
         _input = new InputSystem();
+
+        _raycaster = new Raycaster();
 
         _shooter = new ExplosionShooter(_explosionForce, _explosionRadius, _explosionParticle);
 
@@ -31,11 +35,13 @@ public class Character : MonoBehaviour
         _currentMousePosition = _input.ReadMousePosition();
 
         if (_input.LeftMousePressed())
-            _itemGrabber.Grab(_input.RaycastFrom(_currentMousePosition));
+            _itemGrabber.GrabItem(_raycaster.CameraRaycastFrom(_currentMousePosition));
 
+        if (_input.LeftMouseRelease())
+            _itemGrabber.ReleaeItem();
 
         if (_input.RightMouseClick())
-            _shooter.Shoot(_input.RaycastFrom(_currentMousePosition));
+            _shooter.Shoot(_raycaster.CameraRaycastFrom(_currentMousePosition));
     }
 
     private void OnDrawGizmos()

@@ -29,8 +29,8 @@ public class ExplosionShooter
         {
             Collider collider = _overlapedColliders[i];
 
-            if (collider.TryGetComponent(out Rigidbody rigidbody))
-                rigidbody.AddExplosionForce(_explosionForce, direction, _explosionRadius);
+            if (collider.TryGetComponent(out IExplosionVulnerable explosionVulnerableItem))
+                explosionVulnerableItem.ObtainExplosion(_explosionForce, direction, _explosionRadius);
         }
     }
 }

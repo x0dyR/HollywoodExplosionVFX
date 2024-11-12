@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class ItemGrabber
 {
+    private IGrabable _grabbedItem;
+
     private float _grabRadius;
 
     private Collider[] _overlapedColliders;
@@ -13,7 +15,7 @@ public class ItemGrabber
         _overlapedColliders = new Collider[32];
     }
 
-    public void Grab(Vector3 direction)
+    public void GrabItem(Vector3 direction)
     {
         int count = Physics.OverlapSphereNonAlloc(direction, _grabRadius, _overlapedColliders);
 
@@ -21,11 +23,16 @@ public class ItemGrabber
         {
             Collider collider = _overlapedColliders[i];
 
-            if (collider.TryGetComponent(out Rigidbody rigidbody) == false)
+            if (collider.TryGetComponent(out IGrabable grabableItem) == false)
                 return;
 
-            Vector3 grabbedItemPosition = new Vector3(direction.x, rigidbody.transform.position.y, direction.z);
-            rigidbody.MovePosition(grabbedItemPosition);
+            _grabbedItem = grabableItem;
+            grabableItem.Grab(direction);
         }
+    }
+
+    public void ReleaeItem()
+    {
+        _grabbedItem.Release();
     }
 }
